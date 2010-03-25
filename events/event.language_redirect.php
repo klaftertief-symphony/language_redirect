@@ -32,7 +32,8 @@
 
 		protected function __trigger(){
 			$current_language = $_REQUEST['language'];
-			$supported_languages = array('en','de');
+			
+			$result = new XMLElement('language-redirect');
 			
 			$supported_languages = explode(',', General::Sanitize($this->_Parent->Configuration->get('languages', 'language_redirect')));
 			$supported_languages = array_map('trim', $supported_languages);
@@ -42,7 +43,7 @@
 				if (isset($current_language)) { // no redirect, set current language in cookie
 					setcookie(__SYM_COOKIE_PREFIX__ . 'language', $current_language, time()+TWO_WEEKS, __SYM_COOKIE_PATH__);
 				}
-				else { // redirect to language depending in cookie or browser settings
+				else { // redirect to language depending on cookie or browser settings
 					$current_path = $this->_env['param']['current-path'];
 					$browser_languages = Lang::getBrowserLanguages();
 					foreach ($browser_languages as $language) {
@@ -62,16 +63,13 @@
 					else {
 						$language = $supported_languages[0];
 					}
-
 					header ('Location: '.$this->_env['param']['root'].'/'.$language.$current_path);
 					die();
 				}
-			} else {
-				die();
+				$result->setAttribute('current-language', $current_language);
+				foreach($supported_languages as $language) $result->appendChild(new XMLElement('language', $language));
+				return $result;
 			}
-
-
 			return false;
-			
 		}
 	}
