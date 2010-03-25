@@ -34,34 +34,42 @@
 			$current_language = $_REQUEST['language'];
 			$supported_languages = array('en','de');
 			
-			// TODO: check for unsupported languages
-			if (isset($current_language)) { // no redirect, set current language in cookie
-				setcookie(__SYM_COOKIE_PREFIX__ . 'language', $current_language, time()+TWO_WEEKS, __SYM_COOKIE_PATH__);
-			}
-			else { // redirect to language depending in cookie or browser settings
-				$current_path = $this->_env['param']['current-path'];
-				$browser_languages = Lang::getBrowserLanguages();
-				foreach ($browser_languages as $language) {
-					$language = substr($language,0,2);
-					if (in_array($language, $supported_languages)) {
-						$in_browser_languages = true;
-						$browser_language = $language;
-						break;
-					};
+			$supported_languages = explode(',', General::Sanitize($this->_Parent->Configuration->get('languages', 'language_redirect')));
+			$supported_languages = array_map('trim', $supported_languages);
+			$supported_languages = array_filter($supported_languages);
+			
+			if (is_array($supported_languages) and !empty($supported_languages)) {
+				if (isset($current_language)) { // no redirect, set current language in cookie
+					setcookie(__SYM_COOKIE_PREFIX__ . 'language', $current_language, time()+TWO_WEEKS, __SYM_COOKIE_PATH__);
 				}
-				if (isset($_COOKIE[__SYM_COOKIE_PREFIX__ . 'language'])) {
-					$language = $_COOKIE[__SYM_COOKIE_PREFIX__ . 'language'];
-				}
-				elseif ($in_browser_languages) {
-					$language = $browser_language;
-				}
-				else {
-					$language = $supported_languages[0];
-				}
+				else { // redirect to language depending in cookie or browser settings
+					$current_path = $this->_env['param']['current-path'];
+					$browser_languages = Lang::getBrowserLanguages();
+					foreach ($browser_languages as $language) {
+						$language = substr($language,0,2);
+						if (in_array($language, $supported_languages)) {
+							$in_browser_languages = true;
+							$browser_language = $language;
+							break;
+						};
+					}
+					if (isset($_COOKIE[__SYM_COOKIE_PREFIX__ . 'language'])) {
+						$language = $_COOKIE[__SYM_COOKIE_PREFIX__ . 'language'];
+					}
+					elseif ($in_browser_languages) {
+						$language = $browser_language;
+					}
+					else {
+						$language = $supported_languages[0];
+					}
 
-				header ('Location: '.$this->_env['param']['root'].'/'.$language.$current_path);
+					header ('Location: '.$this->_env['param']['root'].'/'.$language.$current_path);
+					die();
+				}
+			} else {
 				die();
 			}
+
 
 			return false;
 			
