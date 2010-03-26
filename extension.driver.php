@@ -6,7 +6,7 @@
 			return array(
 				'name' => 'Language Redirect',
 				'version' => '1.0beta',
-				'release-date' => '2010-03-24',
+				'release-date' => '2010-03-26',
 				'author' => array(
 					'name' => 'Jonas Coch',
 					'website' => 'http://klaftertief.de',
