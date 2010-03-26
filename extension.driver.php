@@ -50,15 +50,27 @@
 
 			public function __SavePreferences($context){
 				
-				$languages = explode(',', $_POST['settings']['language_redirect']['languages']);
-				$languages = array_map('trim', $languages);
-				$languages = array_filter($languages);
+				$language_codes = explode(',', $_POST['settings']['language_redirect']['languages']);
+				$language_codes = array_map('trim', $language_codes);
+				$language_codes = array_filter($language_codes);
+				
+				$languages = $language_codes;
+				foreach ($languages as &$language) {
+					$language = substr($language,0,2);
+				}
+				$languages = array_unique($languages);
+
+				$regions = $language_codes;
+				foreach ($regions as &$region) {
+					$region = substr(strrchr($region, '-'),1);
+				}
+				$regions = array_filter(array_unique($regions));
 
 				$htaccess = @file_get_contents(DOCROOT . '/.htaccess');
 
 				if($htaccess === false) return false;
 
-				$htaccess = self::__editLanguageRules($htaccess, $languages);
+				$htaccess = self::__editLanguageRules($htaccess, $languages, $regions);
 
 				return @file_put_contents(DOCROOT . '/.htaccess', $htaccess);
 			}
@@ -84,6 +96,7 @@
 				if($htaccess === false) return false;
 
 				$rule = '	### LANGUAGE REDIRECT RULES start
+	### no language codes set
 	### LANGUAGE REDIRECT RULES end';
 
 				## Remove existing rules
@@ -97,6 +110,9 @@
 
 			public function uninstall(){
 
+				Administration::instance()->Configuration->remove('language_redirect');
+				Administration::instance()->saveConfig();
+
 				$htaccess = @file_get_contents(DOCROOT . '/.htaccess');
 
 				if($htaccess === false) return false;
@@ -104,35 +120,40 @@
 				$htaccess = self::__removeLanguageRules($htaccess);
 
 				return @file_put_contents(DOCROOT . '/.htaccess', $htaccess);
+
 			}
 
-			private static function __editLanguageRules($string,$languages = NULL){
+			private static function __editLanguageRules($string, $languages = NULL, $regions = NULL){
 
 				## Cannot use $1 in a preg_replace replacement string, so using a token instead
-				$token_1 = md5('dollar_1');
-				$token_2 = md5('dollar_2');
+				$token_language = md5('language');
+				$token_region = md5('region');
+				$token_symphony = md5('symphony-page');
 				
 				if (is_array($languages) and !empty($languages)) {
 					$supported_languages = implode("|", $languages);
+					$supported_regions = (is_array($languages) and !empty($languages)) ? implode("|", $regions) : NULL;
 					$rule = "
 	RewriteCond %{REQUEST_FILENAME} !-d
 	RewriteCond %{REQUEST_FILENAME} !-f
-	RewriteRule ^({$supported_languages})\/(.*\/?)$ index.php?language={$token_1}&symphony-page={$token_2}&%{QUERY_STRING} [L]";
+	RewriteRule ^({$supported_languages})-?({$supported_regions})?\/(.*\/?)$ index.php?language={$token_language}&region={$token_region}&symphony-page={$token_symphony}&%{QUERY_STRING} [L]";
 				} else {
-					$rule = NULL;
+					$rule = "
+	### no language codes set";
 				}
 				
-				$htaccess = preg_replace('/(\s*### LANGUAGE REDIRECT RULES start)(.*?)(\s*### LANGUAGE REDIRECT RULES end)/s', "$1{$rule}$3", $string);
+				$htaccess = preg_replace('/(\s+### LANGUAGE REDIRECT RULES start)(.*?)(\s*### LANGUAGE REDIRECT RULES end)/s', "$1{$rule}$3", $string);
 
 				## Replace the token with the real value
-				$htaccess = str_replace($token_1, '$1', $htaccess);
-				$htaccess = str_replace($token_2, '$2', $htaccess);
+				$htaccess = str_replace($token_language, '$1', $htaccess);
+				$htaccess = str_replace($token_region, '$2', $htaccess);
+				$htaccess = str_replace($token_symphony, '$3', $htaccess);
 
 				return $htaccess;
 			}
 		
 			private static function __removeLanguageRules($string){
-				return preg_replace('/### LANGUAGE REDIRECT RULES start(.*?)### LANGUAGE REDIRECT RULES end/s', NULL, $string);
+				return preg_replace('/\s+### LANGUAGE REDIRECT RULES start(.*?)### LANGUAGE REDIRECT RULES end/s', NULL, $string);
 			}
 		
 	}

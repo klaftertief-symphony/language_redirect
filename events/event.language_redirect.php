@@ -32,6 +32,7 @@
 
 		protected function __trigger(){
 			$current_language = $_REQUEST['language'];
+			$current_region = $_REQUEST['region'];
 			
 			$result = new XMLElement('language-redirect');
 			
@@ -66,8 +67,21 @@
 					header ('Location: '.$this->_env['param']['root'].'/'.$language.$current_path);
 					die();
 				}
-				$result->setAttribute('current-language', $current_language);
-				foreach($supported_languages as $language) $result->appendChild(new XMLElement('language', $language));
+				
+				$current_language_code = new XMLElement('current-language-code', $current_language);
+				$current_language_code->setAttribute('language', $current_language);
+				if (strlen($current_region) > 0) $current_language_code->setAttribute('region', $current_region);
+				$result->appendChild($current_language_code);
+				
+				$supported_languages_xml = new XMLElement('supported-languages');
+				foreach($supported_languages as $language) {
+					$language_code = new XMLElement('item', $language);
+					$region = substr(strrchr($language, '-'),1);
+					$language_code->setAttribute('language', substr($language,0,2));
+					if (strlen($region) > 0) $language_code->setAttribute('region', $region);
+					$supported_languages_xml->appendChild($language_code);
+				}
+				$result->appendChild($supported_languages_xml);
 				return $result;
 			}
 			return false;
