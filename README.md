@@ -24,6 +24,8 @@ Information about [installing and updating extensions](http://symphony-cms.com/l
 
 Language Redirect adds a new settings field to the Preferences Page. There you can add your supported language codes as a comma separated list. A language code has to be either a two character string like `en` (language) or a five character string like `en-au` (language-region). The extensions adds the language part as `$url-language` and the optional region part as `$url-region` (normal get parameters) to the parameter pool for usage in your datasources or XSL templates.
 
+Don't forget to add the Language Redirect Event to the pages you want to have in different languages.
+
 The event stores the current language an region parameters in a cookie. Visitors will be redirected depending on settings in the following order.
 
 1. saved parameters in the cookie
