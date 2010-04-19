@@ -6,7 +6,7 @@ Adds language redirection to Symphony.
 - Date: 2010-03-26
 - Requirements: Symphony 2.0.x
 - Author: Jonas Coch, jonas@klaftertief.de
-- GitHub Repository: <http://github.com/klaftertief/language-redirect>
+- GitHub Repository: <http://github.com/klaftertief/language_redirect>
 
 ## Synopsis ##
 
