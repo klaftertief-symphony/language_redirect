@@ -10,10 +10,10 @@
 		
 		public static function about(){
 
-			$description = new XMLElement('p', 'This event redirects users to a language version of the page depending on browser settings or cookies.');
+			$description = new XMLElement('p', __('This event redirects users to a language version of the page depending on browser settings or cookies.'));
 
 			return array(
-						 'name' => 'Language Redirect',
+						 'name' => __('Language Redirect'),
 						 'author' => array('name' => 'Jonas Coch',
 										   'website' => 'http://klaftertief.de',
 										   'email' => 'jonas@klaftertief.de'),
@@ -27,7 +27,7 @@
 		}
 
 		public static function documentation(){
-			return 'This event redirects users to a language version of the page depending on browser settings or cookies.';
+			return __('This event redirects users to a language version of the page depending on browser settings or cookies.');
 		}
 
 		protected function __trigger(){
