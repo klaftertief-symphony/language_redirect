@@ -38,7 +38,7 @@
 				$group->appendChild(new XMLElement('legend', __('Language Redirect')));
 
 				$label = Widget::Label(__('Languages'));
-				$label->appendChild(Widget::Input('settings[language_redirect][languages]', General::Sanitize($context['parent']->Configuration->get('languages', 'language_redirect'))));
+				$label->appendChild(Widget::Input('settings[language_redirect][languages]', General::Sanitize(Symphony::Configuration()->get('languages', 'language_redirect'))));
 
 				$group->appendChild($label);
 
@@ -110,7 +110,7 @@
 
 			public function uninstall(){
 
-				Administration::instance()->Configuration->remove('language_redirect');
+				Symphony::Configuration()->remove('language_redirect');
 				Administration::instance()->saveConfig();
 
 				$htaccess = @file_get_contents(DOCROOT . '/.htaccess');

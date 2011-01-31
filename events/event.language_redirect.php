@@ -37,7 +37,7 @@
 			
 			$result = new XMLElement('language-redirect');
 			
-			$supported_language_codes = explode(',', General::Sanitize($this->_Parent->Configuration->get('languages', 'language_redirect')));
+			$supported_language_codes = explode(',', General::Sanitize(Symphony::Configuration()->get('languages', 'language_redirect')));
 			$supported_language_codes = array_map('trim', $supported_language_codes);
 			$supported_language_codes = array_filter($supported_language_codes);
 			
