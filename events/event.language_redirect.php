@@ -18,7 +18,7 @@
 										   'website' => 'http://klaftertief.de',
 										   'email' => 'jonas@klaftertief.de'),
 						 'version' => '1.0',
-						 'release-date' => '2010-03-19',
+						 'release-date' => '2011-01-31',
 						 'trigger-condition' => '');
 		}
 

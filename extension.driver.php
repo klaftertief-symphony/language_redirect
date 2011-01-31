@@ -5,8 +5,8 @@
 		public function about(){
 			return array(
 				'name' => 'Language Redirect',
-				'version' => '1.0beta',
-				'release-date' => '2010-03-26',
+				'version' => '1.0',
+				'release-date' => '2011-01-31',
 				'author' => array(
 					'name' => 'Jonas Coch',
 					'website' => 'http://klaftertief.de',

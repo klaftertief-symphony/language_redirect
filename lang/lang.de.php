@@ -7,7 +7,7 @@
 			'email' => 'jonas@klaftertief.de',
 			'website' => 'http://klaftertief.de'
 		),
-		'release-date' => '2010-09-05',
+		'release-date' => '2011-01-31',
 	);
 
 
