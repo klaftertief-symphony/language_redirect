@@ -45,14 +45,14 @@
 			if (is_array($supported_language_codes) and !empty($supported_language_codes)) {
 				// no redirect, set current language and region in cookie
 				if (isset($current_language_code) and in_array($current_language_code, $supported_language_codes)) {
-					$Cookie = new Cookie(__SYM_COOKIE_PREFIX__ . 'language-redirect', TWO_WEEKS, __SYM_COOKIE_PATH__);
+					$Cookie = new Cookie(__SYM_COOKIE_PREFIX_ . 'language-redirect', TWO_WEEKS, __SYM_COOKIE_PATH__);
 					$Cookie->set('language', $current_language);
 					$Cookie->set('region', $current_region);
 				}
 				// redirect to language-code depending on cookie or browser settings
 				else {
 					$current_path = !isset($current_language_code) ? $this->_env['param']['current-path'] : substr($this->_env['param']['current-path'],strlen($current_language_code)+1);
-					$browser_languages = Lang::getBrowserLanguages();
+					$browser_languages = $this->getBrowserLanguages();
 					foreach ($browser_languages as $language) {
 						if (in_array($language, $supported_language_codes)) {
 							$in_browser_languages = true;
@@ -60,7 +60,7 @@
 							break;
 						};
 					}
-					$Cookie = new Cookie(__SYM_COOKIE_PREFIX__ . 'language-redirect', TWO_WEEKS, __SYM_COOKIE_PATH__);
+					$Cookie = new Cookie(__SYM_COOKIE_PREFIX_ . 'language-redirect', TWO_WEEKS, __SYM_COOKIE_PATH__);
 					$cookie_language_code = $Cookie->get('language');
 					if (strlen($cookie_language_code) > 0) {
 						$language_code = $Cookie->get('region') ? $cookie_language_code.'-'.$Cookie->get('region') : $cookie_language_code;
@@ -91,6 +91,38 @@
 				return $result;
 			}
 			return false;
+		}
+
+		/**
+		 * Get browser languages
+		 *
+		 * Return languages accepted by browser as an array sorted by priority
+		 * @return array language codes, e. g. 'en'
+		 */	 
+		public static function getBrowserLanguages() {
+			static $languages;
+			if(is_array($languages)) return $languages;
+
+			$languages = array();
+
+			if(strlen(trim($_SERVER['HTTP_ACCEPT_LANGUAGE'])) < 1) return $languages;
+			if(!preg_match_all('/(\w+(?:-\w+)?,?)+(?:;q=(?:\d+\.\d+))?/', preg_replace('/\s+/', '', $_SERVER['HTTP_ACCEPT_LANGUAGE']), $matches)) return $languages;
+
+			$priority = 1.0;
+			$languages = array();
+			foreach($matches[0] as $def){
+				list($list, $q) = explode(';q=', $def);
+				if(!empty($q)) $priority=floatval($q);
+				$list = explode(',', $list);
+				foreach($list as $lang){
+					$languages[$lang] = $priority;
+					$priority -= 0.000000001;
+				}
+			}
+			arsort($languages);
+			$languages = array_keys($languages);
+			// return list sorted by descending priority, e.g., array('en-gb','en');
+			return $languages;
 		}
 
 		// I don't know those languages, so if You know for sure that browser uses different code,
