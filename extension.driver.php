@@ -111,7 +111,7 @@
 			public function uninstall(){
 
 				Symphony::Configuration()->remove('language_redirect');
-				Administration::instance()->saveConfig();
+				Symphony::Engine()->saveConfig();
 
 				$htaccess = @file_get_contents(DOCROOT . '/.htaccess');
 
