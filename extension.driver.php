@@ -36,8 +36,8 @@
 			$group->setAttribute('class', 'settings');
 			$group->appendChild(new XMLElement('legend', __('Language Redirect')));
 
-			$label = Widget::Label(__('Languages'));
-			$label->appendChild(Widget::Input('settings[language_redirect][languages]', General::Sanitize(Symphony::Configuration()->get('languages', 'language_redirect'))));
+			$label = Widget::Label(__('Language codes'));
+			$label->appendChild(Widget::Input('settings[language_redirect][language_codes]', General::Sanitize(Symphony::Configuration()->get('language_codes', 'language_redirect'))));
 
 			$group->appendChild($label);
 
@@ -47,7 +47,7 @@
 		}
 
 		public function __SavePreferences($context){
-			$languageCodes = $_POST['settings']['language_redirect']['languages'];
+			$languageCodes = $_POST['settings']['language_redirect']['language_codes'];
 
 			return self::__updateRewriteRules('edit', $languageCodes);
 		}
@@ -57,7 +57,7 @@
 		}
 
 		public function enable(){
-			$languageCodes = Symphony::Configuration()->get('languages', 'language_redirect');
+			$languageCodes = Symphony::Configuration()->get('language_codes', 'language_redirect');
 
 			return self::__updateRewriteRules('edit', $languageCodes);
 		}

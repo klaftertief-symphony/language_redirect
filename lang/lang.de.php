@@ -19,8 +19,8 @@
 		'Language Redirect' => 
 		'Sprachweiterleitung',
 
-		'Languages' => 
-		'Sprachen',
+		'Language codes' => 
+		'Sprachcodes',
 
 		'This event redirects users to a language version of the page depending on browser settings or cookies.' =>
 		'Dieses Ereignis leitet Besucher abhängig von der Browsereinstellung oder Cookies auf eine entsprechende Sprachversion der Seite weiter.',
