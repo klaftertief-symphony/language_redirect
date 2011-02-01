@@ -62,6 +62,16 @@
 			return self::__updateRewriteRules('edit', $languageCodes);
 		}
 
+		public function update($previousVersion){
+			if (version_compare($previousVersion, '1.0', '<')) {
+				$languageCodes = Symphony::Configuration()->get('languages', 'language_redirect');
+
+				Symphony::Configuration()->remove('languages', 'language_redirect');
+				Symphony::Configuration()->set('language_codes', $languageCodes, 'language_redirect');
+				Administration::instance()->saveConfig();
+			}
+		}
+
 		public function disable(){
 			return self::__updateRewriteRules('edit');
 		}
