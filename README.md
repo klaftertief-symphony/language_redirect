@@ -2,17 +2,15 @@
 
 Adds language redirection to Symphony.
 
-- Version: 1.0beta
-- Date: 2010-03-26
-- Requirements: Symphony 2.0.x
+- Version: 1.0
+- Date: 2011-02-01
+- Requirements: Symphony 2.1.x
 - Author: Jonas Coch, jonas@klaftertief.de
 - GitHub Repository: <http://github.com/klaftertief/language_redirect>
 
 ## Synopsis ##
 
 Language Redirect provides an event to redirect visitors based on browser settings, values in a cookie or default settings. It adds language and region parameters to the parameter pool and renders those parameters in a clean way at the beginning of the URL.
-
-**This is a beta extension.**
 
 ## Installation & Updating ##
 
@@ -31,3 +29,9 @@ The event stores the current language an region parameters in a cookie. Visitors
 1. saved parameters in the cookie
 2. first matched language code in browser settings
 3. default language code (first in saved preferences)
+
+## Change Log ##
+
+**Version 1.0**
+- The name of the key of the stored language codes in `/manifest/config.php` changed from `languages` to `language_codes`.
+

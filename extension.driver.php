@@ -6,7 +6,7 @@
 			return array(
 				'name' => 'Language Redirect',
 				'version' => '1.0',
-				'release-date' => '2011-01-31',
+				'release-date' => '2011-02-01',
 				'author' => array(
 					'name' => 'Jonas Coch',
 					'website' => 'http://klaftertief.de',
@@ -70,6 +70,8 @@
 				Symphony::Configuration()->set('language_codes', $languageCodes, 'language_redirect');
 				Administration::instance()->saveConfig();
 			}
+
+			return true;
 		}
 
 		public function disable(){
