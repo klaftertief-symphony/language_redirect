@@ -18,9 +18,6 @@
 		'Language Redirect' => 
 		'Redirecţionare după Limbă',
 
-		'Languages' => 
-		'Limbi',
-
 		'This event redirects users to a language version of the page depending on browser settings or cookies.' =>
 		'Acest eveniment redirecţionează utilizatorii către o versiune a paginii cu limba setată în funcţie de setările browserului sau cookies.',
 
