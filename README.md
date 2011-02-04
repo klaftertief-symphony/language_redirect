@@ -2,8 +2,8 @@
 
 Adds language redirection to Symphony.
 
-- Version: 1.0
-- Date: 2011-02-01
+- Version: 1.0.1
+- Date: 2011-02-04
 - Requirements: Symphony 2.1.x
 - Author: Jonas Coch, jonas@klaftertief.de
 - GitHub Repository: <http://github.com/klaftertief/language_redirect>
@@ -34,4 +34,7 @@ The event stores the current language an region parameters in a cookie. Visitors
 
 **Version 1.0**
 - The name of the key of the stored language codes in `/manifest/config.php` changed from `languages` to `language_codes`.
+
+**Version 1.0.1**
+- Added Romanian translation. Thanks, vladG.
 
