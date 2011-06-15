@@ -3,23 +3,28 @@
 	if(!defined('__IN_SYMPHONY__')) die('<h2>Error</h2><p>You cannot directly access this file</p>');
 
 	require_once(TOOLKIT . '/class.event.php');
+	require_once(EXTENSIONS . '/language_redirect/lib/class.languager.php');
 	
 	Class eventlanguage_redirect extends Event{
 		
 		const ROOTELEMENT = 'language-redirect';
 		
 		public static function about(){
-
-			$description = new XMLElement('p', __('This event redirects users to a language version of the page depending on browser settings or cookies.'));
-
 			return array(
-						 'name' => __('Language Redirect'),
-						 'author' => array('name' => 'Jonas Coch',
-										   'website' => 'http://klaftertief.de',
-										   'email' => 'jonas@klaftertief.de'),
-						 'version' => '1.0',
-						 'release-date' => '2011-02-01',
-						 'trigger-condition' => '');
+						'name' => __('Language Redirect'),
+						'author' => array(
+										array(	'name' => 'Jonas Coch',
+												'website' => 'http://klaftertief.de',
+										   		'email' => 'jonas@klaftertief.de'
+										),
+										
+										array(	'name' => 'Vlad Ghita',
+										   		'email' => 'vlad_micutul@yahoo.com'
+										),
+						),
+						'version' => '1.1',
+						'release-date' => '2011-06-15',
+						'trigger-condition' => '');
 		}
 
 		public function load(){
@@ -31,24 +36,20 @@
 		}
 
 		protected function __trigger(){
-			$current_language = $_REQUEST['language'];
-			$current_region = $_REQUEST['region'];
-			$current_language_code = $_REQUEST['region'] ? $_REQUEST['language'].'-'.$_REQUEST['region'] : $_REQUEST['language'];
-			
-			$result = new XMLElement('language-redirect');
-			
-			$supported_language_codes = explode(',', General::Sanitize(Symphony::Configuration()->get('language_codes', 'language_redirect')));
-			$supported_language_codes = array_map('trim', $supported_language_codes);
-			$supported_language_codes = array_filter($supported_language_codes);
+			$supported_language_codes = LanguageR::instance()->getSupportedLanguageCodes();
 			
 			// only do something when there is a set of supported languages defined
-			if (is_array($supported_language_codes) and !empty($supported_language_codes)) {
+			if ( !empty($supported_language_codes) ) {
+				
+				$current_language_code = LanguageR::instance()->getLanguageCode();
+				
 				// no redirect, set current language and region in cookie
 				if (isset($current_language_code) and in_array($current_language_code, $supported_language_codes)) {
 					$Cookie = new Cookie(__SYM_COOKIE_PREFIX_ . 'language-redirect', TWO_WEEKS, __SYM_COOKIE_PATH__);
-					$Cookie->set('language', $current_language);
-					$Cookie->set('region', $current_region);
+					$Cookie->set('language', LanguageR::instance()->getLanguage());
+					$Cookie->set('region', LanguageR::instance()->getRegion());
 				}
+				
 				// redirect to language-code depending on cookie or browser settings
 				else {
 					$current_path = !isset($current_language_code) ? $this->_env['param']['current-path'] : substr($this->_env['param']['current-path'],strlen($current_language_code)+1);
@@ -76,6 +77,8 @@
 					die();
 				}
 				
+				$result = new XMLElement('language-redirect');
+				
 				$current_language_xml = new XMLElement('current-language', $this->lang[$current_language_code] ? $this->lang[$current_language_code] : $current_language_code);
 				$current_language_xml->setAttribute('handle', $current_language_code);
 				$result->appendChild($current_language_xml);
@@ -90,6 +93,7 @@
 				
 				return $result;
 			}
+			
 			return false;
 		}
 
@@ -150,19 +154,19 @@
 			'ar-ae' => 'العربية (U.A.E.)',			// Arabic
 			'ar-ye' => 'العربية (Yemen)',			// Arabic
 			'ar' => 'العربية',						// Arabic
-			'hy' => 'Հայերեն',						// Armenian
-			'as' => 'অসমীয়া',							// Assamese
+			'hy' => 'Հայերեն',							// Armenian
+			'as' => 'অসমীয়া',								// Assamese
 			'az' => 'azərbaycan',					// Azeri
 			'eu' => 'euskera',						// Basque
 			'be' => 'Беларуская',					// Belarusian
-			'bn' => 'বাংলা',							// Bengali
+			'bn' => 'বাংলা',								// Bengali
 			'bg' => 'Български',					// Bulgarian
 			'ca' => 'Català',						// Catalan
-			'zh-cn' => '简体中文 (China)',			// Chinese simplified script
-			'zh-hk' => '繁體中文 (Hong Kong SAR)',	// Chinese traditional script
-			'zh-mo' => '繁體中文 (Macau SAR)',		// Chinese traditional script
-			'zh-sg' => '简体中文 (Singapore)',		// Chinese simplified script
-			'zh-tw' => '繁體中文 (Taiwan)',			// Chinese traditional script
+			'zh-cn' => '简体中文 (China)',					// Chinese simplified script
+			'zh-hk' => '繁體中文 (Hong Kong SAR)',			// Chinese traditional script
+			'zh-mo' => '繁體中文 (Macau SAR)',				// Chinese traditional script
+			'zh-sg' => '简体中文 (Singapore)',				// Chinese simplified script
+			'zh-tw' => '繁體中文 (Taiwan)',				// Chinese traditional script
 			'zh' => '中文',							// Chinese
 			'hr' => 'Hrvatski',						// Croatian
 			'cs' => 'čeština',						// Czech
@@ -199,7 +203,7 @@
 			'gd' => 'Gàidhlig',						// Gaelic (Scottish)
 			'ga' => 'Gaeilge',						// Gaelic (Irish)
 			'gv' => 'Gaelg',						// Gaelic (Manx) (Isle of Man)
-			'ka' => 'ქართული ენა',					// Georgian
+			'ka' => 'ქართული ენა',						// Georgian
 			'de-at' => 'Deutsch (Austria)',			// German
 			'de-li' => 'Deutsch (Liechtenstein)',	// German
 			'de-lu' => 'Deutsch (Luxembourg)',		// German
@@ -216,18 +220,18 @@
 			'it-ch' => 'italiano (Switzerland)',	// Italian
 			'it' => 'italiano',						// Italian
 			'ja' => '日本語',							// Japanese
-			'kn' => 'ಕನ್ನಡ',						// Kannada
+			'kn' => 'ಕನ್ನಡ',							// Kannada
 			'kk' => 'Қазақ',						// Kazakh
 			'rw' => 'Kinyarwanda',					// Kinyarwanda
 			'kok' => 'कोंकणी',							// Konkani
-			'ko' => '한국어/조선말',					// Korean
+			'ko' => '한국어/조선말',							// Korean
 			'kz' => 'Кыргыз',						// Kyrgyz
 			'lv' => 'Latviešu',						// Latvian
 			'lt' => 'Lietuviškai',					// Lithuanian
 			'luo'=> 'Dholuo',						// Luo
 			'ms' => 'Bahasa Melayu',				// Malay
 			'mk' => 'Македонски',					// Macedonian
-			'ml' => 'മലയാളം',							// Malayalam
+			'ml' => 'മലയാളം',								// Malayalam
 			'mt' => 'Malti',						// Maltese
 			'mr' => 'मराठी',							// Marathi
 			'mn' => 'Монгол',						// Mongolian  (Cyrillic)
@@ -237,8 +241,8 @@
 			'nn-no' => 'Norsk nynorsk',				// Norwegian Nynorsk
 			'nn' => 'Norsk nynorsk',				// Norwegian Nynorsk
 			'no' => 'Norsk',						// Norwegian
-			'or' => 'ଓଡ଼ିଆ',							// Oriya
-			'ps' => 'پښتو',						// Pashto
+			'or' => 'ଓଡ଼ିଆ',								// Oriya
+			'ps' => 'پښتو',							// Pashto
 			'pl' => 'polski',						// Polish
 			'pt-br' => 'português brasileiro',		// Portuguese (Brasil)
 			'pt' => 'português',					// Portuguese
@@ -294,7 +298,7 @@
 			'tn' => 'Setswana',						// Tswana
 			'tr' => 'Türkçe',						// Turkish
 			'tk' => 'Түркмен',						// Turkmen
-			'ug' => 'ئۇيغۇرچە‎/Uyƣurqə/Уйғурчә',	// Uighur, Uyghur
+			'ug' => 'ئۇيغۇرچە‎/Uyƣurqə/Уйғурчә',		// Uighur, Uyghur
 			'uk' => 'Українська',					// Ukrainian
 			'ur' => 'اردو',							// Urdu
 			'uz' => 'o\'zbek',						// Uzbek

@@ -1,18 +1,23 @@
 <?php
 
 	Class extension_language_redirect extends Extension{
-
+		
 		public function about(){
 			return array(
 				'name' => 'Language Redirect',
-				'version' => '1.0.1',
-				'release-date' => '2011-02-04',
+				'version' => '1.0.2',
+				'release-date' => '2011-06-15',
 				'author' => array(
-					'name' => 'Jonas Coch',
-					'website' => 'http://klaftertief.de',
-					'email' => 'jonas@klaftertief.de'
-					)
-				);
+								array(	'name' => 'Jonas Coch',
+										'website' => 'http://klaftertief.de',
+								   		'email' => 'jonas@klaftertief.de'
+								),
+								
+								array(	'name' => 'Vlad Ghita',
+								   		'email' => 'vlad_micutul@yahoo.com'
+								),
+				),
+			);
 		}
 
 		public function getSubscribedDelegates(){
@@ -30,7 +35,7 @@
 						),
 			);
 		}
-
+		
 		public function appendPreferences($context){
 			$group = new XMLElement('fieldset');
 			$group->setAttribute('class', 'settings');
