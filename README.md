@@ -14,7 +14,7 @@ Language Redirect provides an event to redirect visitors based on browser settin
 
 ## Installation & Updating ##
 
-**This extensions modifies the `.htaccess` file. You schould always make a backup before you install the extension or update the preferences.**
+**This extensions modifies the `.htaccess` file. You should always make a backup before you install the extension or update the preferences.**
 
 Information about [installing and updating extensions](http://symphony-cms.com/learn/tasks/view/install-an-extension/) can be found in the Symphony documentation at <http://symphony-cms.com/learn/>.
 
