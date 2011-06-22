@@ -201,8 +201,8 @@
 			$this->_language_code = $this->_region ? $this->_language.'-'.$this->_region : $this->_language;
 			
 			$supported_language_codes = explode(',', General::sanitize(Symphony::Configuration()->get('language_codes', 'language_redirect')));
-			$supported_language_codes = array_map('trim', $supported_language_codes);
-			$this->_supported_language_codes = array_filter($supported_language_codes);
+			
+			$this->_supported_language_codes = self::cleanLanguageCodes($supported_language_codes);
 		}
 		
 		public static function instance() {
@@ -252,5 +252,17 @@
 		 */
 		public function getAllLanguages(){
 			return $this->_languages;
+		}
+		
+		
+		
+		/*------------------------------------------------------------------------------------------------*/
+		/*  Utilities  */
+		/*------------------------------------------------------------------------------------------------*/
+		public static function cleanLanguageCodes($language_codes){
+			$clean = array_map('trim', $language_codes);
+			$clean = array_filter($clean);
+			
+			return $clean;
 		}
 	}
