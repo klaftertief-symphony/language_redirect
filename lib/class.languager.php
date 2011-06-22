@@ -259,7 +259,7 @@
 		/*------------------------------------------------------------------------------------------------*/
 		/*  Utilities  */
 		/*------------------------------------------------------------------------------------------------*/
-		public static function cleanLanguageCodes($language_codes){
+		public static function cleanLanguageCodes(&$language_codes){
 			$clean = array_map('trim', $language_codes);
 			$clean = array_filter($clean);
 			

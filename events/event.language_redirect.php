@@ -73,7 +73,7 @@
 						$language_code = $supported_language_codes[0];
 					}
 					// redirect and exit
-					header('Location: '.$this->_env['param']['root'].'/'.$language_code.$current_path);
+					header('Location: '.$this->_env['param']['root'].'/'.$language_code.'/'.$current_path);
 					die();
 				}
 				
