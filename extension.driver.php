@@ -6,16 +6,17 @@
 			return array(
 				'name' => 'Language Redirect',
 				'version' => '1.0.2',
-				'release-date' => '2011-06-15',
+				'release-date' => '2011-06-26',
 				'author' => array(
-								array(	'name' => 'Jonas Coch',
-										'website' => 'http://klaftertief.de',
-								   		'email' => 'jonas@klaftertief.de'
+								array(
+									'name' => 'Jonas Coch',
+									'website' => 'http://klaftertief.de',
+									'email' => 'jonas@klaftertief.de'
 								),
-								
-								array(	'name' => 'Vlad Ghita',
-								   		'email' => 'vlad_micutul@yahoo.com'
-								),
+								array(
+									'name' => 'Vlad Ghita',
+									'email' => 'vlad_micutul@yahoo.com'
+								)
 				),
 			);
 		}

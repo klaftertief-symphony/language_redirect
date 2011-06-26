@@ -3,7 +3,7 @@
 	if(!defined('__IN_SYMPHONY__')) die('<h2>Error</h2><p>You cannot directly access this file</p>');
 
 	require_once(TOOLKIT . '/class.event.php');
-	require_once(EXTENSIONS . '/language_redirect/lib/class.languager.php');
+	require_once(EXTENSIONS . '/language_redirect/lib/class.languageredirect.php');
 	
 	Class eventlanguage_redirect extends Event{
 		
@@ -36,18 +36,18 @@
 		}
 
 		protected function __trigger(){
-			$supported_language_codes = LanguageR::instance()->getSupportedLanguageCodes();
+			$supported_language_codes = LanguageRedirect::instance()->getSupportedLanguageCodes();
 			
 			// only do something when there is a set of supported languages defined
 			if ( !empty($supported_language_codes) ) {
 				
-				$current_language_code = LanguageR::instance()->getLanguageCode();
+				$current_language_code = LanguageRedirect::instance()->getLanguageCode();
 				
 				// no redirect, set current language and region in cookie
 				if (isset($current_language_code) and in_array($current_language_code, $supported_language_codes)) {
 					$Cookie = new Cookie(__SYM_COOKIE_PREFIX_ . 'language-redirect', TWO_WEEKS, __SYM_COOKIE_PATH__);
-					$Cookie->set('language', LanguageR::instance()->getLanguage());
-					$Cookie->set('region', LanguageR::instance()->getRegion());
+					$Cookie->set('language', LanguageRedirect::instance()->getLanguage());
+					$Cookie->set('region', LanguageRedirect::instance()->getRegion());
 				}
 				
 				// redirect to language-code depending on cookie or browser settings
@@ -77,7 +77,7 @@
 					die();
 				}
 				
-				$all_languages = LanguageR::instance()->getAllLanguages();
+				$all_languages = LanguageRedirect::instance()->getAllLanguages();
 				
 				$result = new XMLElement('language-redirect');
 				

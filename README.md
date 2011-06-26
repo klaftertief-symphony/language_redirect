@@ -30,7 +30,7 @@ The event stores the current language an region parameters in a cookie. Visitors
 2. first matched language code in browser settings
 3. default language code (first in saved preferences)
 
-For developers: Have a look at `lib/class.languager.php` for using language codes internal.
+For developers: Have a look at `lib/class.languageredirect.php` for using language codes internal.
 
 ## Change Log ##
 
