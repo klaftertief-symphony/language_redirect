@@ -2,10 +2,10 @@
 
 Adds language redirection to Symphony.
 
-- Version: 1.0.1
-- Date: 2011-02-04
+- Version: 1.0.2
+- Date: 2011-06-15
 - Requirements: Symphony 2.1.x
-- Author: Jonas Coch, jonas@klaftertief.de
+- Author: Jonas Coch, jonas@klaftertief.de, Vlad Ghita, vlad_micutul@yahoo.com
 - GitHub Repository: <http://github.com/klaftertief/language_redirect>
 
 ## Synopsis ##
@@ -14,7 +14,7 @@ Language Redirect provides an event to redirect visitors based on browser settin
 
 ## Installation & Updating ##
 
-**This extensions modifies the `.htaccess` file. You schould always make a backup before you install the extension or update the preferences.**
+**This extensions modifies the `.htaccess` file. You should always make a backup before you install the extension or update the preferences.**
 
 Information about [installing and updating extensions](http://symphony-cms.com/learn/tasks/view/install-an-extension/) can be found in the Symphony documentation at <http://symphony-cms.com/learn/>.
 
@@ -30,6 +30,8 @@ The event stores the current language an region parameters in a cookie. Visitors
 2. first matched language code in browser settings
 3. default language code (first in saved preferences)
 
+For developers: Have a look at `lib/class.languager.php` for using language codes internal.
+
 ## Change Log ##
 
 **Version 1.0**
@@ -38,3 +40,5 @@ The event stores the current language an region parameters in a cookie. Visitors
 **Version 1.0.1**
 - Added Romanian translation. Thanks, vladG.
 
+**Version 1.0.2**
+- Separated language identification from page redirect.
