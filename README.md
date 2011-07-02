@@ -2,8 +2,8 @@
 
 Adds language redirection to Symphony.
 
-- Version: 1.0.2
-- Date: 2011-06-15
+- Version: 1.0.3
+- Date: 2011-07-02
 - Requirements: Symphony 2.1.x
 - Author: Jonas Coch, jonas@klaftertief.de, Vlad Ghita, vlad_micutul@yahoo.com
 - GitHub Repository: <http://github.com/klaftertief/language_redirect>
