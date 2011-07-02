@@ -42,3 +42,6 @@ For developers: Have a look at `lib/class.languageredirect.php` for using langua
 
 **Version 1.0.2**
 - Separated language identification from page redirect.
+
+**Version 1.0.3**
+- Changed static method `cleanLanguageCodes` to non-static in `LanguageRedirect` class.
