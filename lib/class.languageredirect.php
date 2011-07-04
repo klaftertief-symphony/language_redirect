@@ -202,7 +202,7 @@
 			
 			$supported_language_codes = explode(',', General::sanitize(Symphony::Configuration()->get('language_codes', 'language_redirect')));
 			
-			$this->_supported_language_codes = self::cleanLanguageCodes($supported_language_codes);
+			$this->_supported_language_codes = $this->cleanLanguageCodes($supported_language_codes);
 		}
 		
 		public static function instance() {
@@ -259,7 +259,7 @@
 		/*------------------------------------------------------------------------------------------------*/
 		/*  Utilities  */
 		/*------------------------------------------------------------------------------------------------*/
-		public static function cleanLanguageCodes(&$language_codes){
+		public function cleanLanguageCodes($language_codes){
 			$clean = array_map('trim', $language_codes);
 			$clean = array_filter($clean);
 			
