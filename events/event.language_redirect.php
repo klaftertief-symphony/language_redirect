@@ -63,7 +63,7 @@
 					}
 					$Cookie = new Cookie(__SYM_COOKIE_PREFIX_ . 'language-redirect', TWO_WEEKS, __SYM_COOKIE_PATH__);
 					$cookie_language_code = $Cookie->get('language');
-					if (strlen($cookie_language_code) > 0) {
+					if (strlen($cookie_language_code) > 0 && in_array($cookie_language_code, $supported_language_codes)) {
 						$language_code = $Cookie->get('region') ? $cookie_language_code.'-'.$Cookie->get('region') : $cookie_language_code;
 					}
 					elseif ($in_browser_languages) {
