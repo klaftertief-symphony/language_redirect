@@ -5,8 +5,8 @@
 		public function about(){
 			return array(
 				'name' => 'Language Redirect',
-				'version' => '1.0.3',
-				'release-date' => '2011-07-02',
+				'version' => '1.0.4',
+				'release-date' => '2011-10-27',
 				'author' => array(
 								array(
 									'name' => 'Jonas Coch',

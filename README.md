@@ -2,8 +2,8 @@
 
 Adds language redirection to Symphony.
 
-- Version: 1.0.3
-- Date: 2011-07-02
+- Version: 1.0.4
+- Date: 2011-10-27
 - Requirements: Symphony 2.1.x
 - Author: Jonas Coch, jonas@klaftertief.de, Vlad Ghita, vlad_micutul@yahoo.com
 - GitHub Repository: <http://github.com/klaftertief/language_redirect>
@@ -45,3 +45,6 @@ For developers: Have a look at `lib/class.languageredirect.php` for using langua
 
 **Version 1.0.3**
 - Changed static method `cleanLanguageCodes` to non-static in `LanguageRedirect` class.
+
+**Version 1.0.4**
+- Fixed a redirect loop when removing a language from preferences, that language is still matched by cookie reference.
