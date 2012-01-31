@@ -1,6 +1,14 @@
 <?php
+	
+	if(!defined('__IN_SYMPHONY__')) die('<h2>Error</h2><p>You cannot directly access this file</p>');
+
+	
+	require_once(EXTENSIONS . '/language_redirect/lib/class.languageredirect.php');
+
 
 	Class extension_language_redirect extends Extension{
+		
+		private $resolved = false;
 		
 		public function about(){
 			return array(
@@ -24,6 +32,12 @@
 		public function getSubscribedDelegates(){
 			return array(
 						array(
+							'page' => '/frontend/',
+							'delegate' => 'FrontendPrePageResolve',
+							'callback' => 'detectLanguage'
+						),
+						
+						array(
 							'page' => '/system/preferences/',
 							'delegate' => 'AddCustomPreferenceFieldsets',
 							'callback' => 'appendPreferences'
@@ -35,6 +49,41 @@
 							'callback' => '__SavePreferences'
 						),
 			);
+		}
+		
+		public function detectLanguage($context){
+			if( !$this->resolved ){
+				$this->resolved = true;
+				
+				// if language is already set do nothing
+				$language = LanguageRedirect::instance()->getLanguage();
+				$region = LanguageRedirect::instance()->getRegion();
+				
+				if( empty($language) ){
+					// get language
+					$current_language_code = LanguageRedirect::instance()->determineLanguageCode();
+					$current_language_code_arr = explode('-', $current_language_code);
+				
+					$language = empty($current_language_code_arr[0]) ? '' : $current_language_code_arr[0];
+					$region = empty($current_language_code_arr[1]) ? '' : $current_language_code_arr[1];
+				
+					// store references
+					LanguageRedirect::instance()->setLanguage($language);
+					LanguageRedirect::instance()->setRegion($region);
+				
+					// mantain compatibility with previous implementations
+					$_GET['language'] = $language;
+					$_GET['region'] = $region;
+				
+					$_REQUEST['language'] = $language;
+					$_REQUEST['region'] = $region;
+				}
+				
+				// save to Cookie
+				$Cookie = new Cookie(__SYM_COOKIE_PREFIX_ . 'language-redirect', TWO_WEEKS, __SYM_COOKIE_PATH__);
+				$Cookie->set('language', $language);
+				$Cookie->set('region', $region);
+			}
 		}
 		
 		public function appendPreferences($context){
@@ -64,8 +113,8 @@
 
 		public function enable(){
 			$languageCodes = Symphony::Configuration()->get('language_codes', 'language_redirect');
-
-			return self::__updateRewriteRules('edit', $languageCodes);
+			
+			return self::__updateRewriteRules('create') && self::__updateRewriteRules('edit', $languageCodes);
 		}
 
 		public function update($previousVersion){
