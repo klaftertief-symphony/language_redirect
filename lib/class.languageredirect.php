@@ -8,7 +8,6 @@
 		
 		private $_language;
 		private $_region;
-		private $_language_code;
 		private $_supported_language_codes;
 		
 		// I don't know those languages, so if You know for sure that browser uses different code,
@@ -74,12 +73,12 @@
 			'fo' => 'føroyskt',						// Faeroese
 			'fa' => 'فارسی',						// Farsi
 			'fi' => 'suomi',						// Finnish
-			'fr-be' => 'français (Belgium)',		// French (Belgium)
-			'fr-ca' => 'français canadien',			// French (Canada)
-			'fr-lu' => 'français (Luxembourg)',		// French
-			'fr-mc' => 'français (Monaco)',			// French
-			'fr-ch' => 'français (Switzerland)',	// French
-			'fr' => 'français',						// French
+			'fr-be' => 'Français (Belgium)',		// French (Belgium)
+			'fr-ca' => 'Français canadien',			// French (Canada)
+			'fr-lu' => 'Français (Luxembourg)',		// French
+			'fr-mc' => 'Français (Monaco)',			// French
+			'fr-ch' => 'Français (Switzerland)',	// French
+			'fr' => 'Français',						// French
 			'ff' => 'Fulfulde, Pulaar, Pular',		// Fula, Fulah, Fulani
 			'gl' => 'Galego',						// Galician
 			'gd' => 'Gàidhlig',						// Gaelic (Scottish)
@@ -195,25 +194,37 @@
 			'zu' => 'isiZulu',						// Zulu
 		);
 		
+		
 		private function __construct(){
 			$this->_language = General::sanitize($_REQUEST['language']);
 			$this->_region = General::sanitize($_REQUEST['region']);
-			$this->_language_code = $this->_region ? $this->_language.'-'.$this->_region : $this->_language;
 			
 			$supported_language_codes = explode(',', General::sanitize(Symphony::Configuration()->get('language_codes', 'language_redirect')));
 			
 			$this->_supported_language_codes = $this->cleanLanguageCodes($supported_language_codes);
 		}
 		
+		
+		
 		public static function instance() {
-			if (!self::$_instance) {self::$_instance = new self(); }
+			if (!self::$_instance) {
+				self::$_instance = new self();
+			}
 			
 			return self::$_instance;
 		}
 		
+		public function setLanguage($language){
+			$this->_language = $language;
+		}
+		
+		public function setRegion($region){
+			$this->_region = $region;
+		}
+		
 		/**
 		 * Get current language.
-		 * 
+		 *
 		 * @return string
 		 */
 		public function getLanguage(){
@@ -222,7 +233,7 @@
 		
 		/**
 		 * Get current region.
-		 * 
+		 *
 		 * @return string
 		 */
 		public function getRegion(){
@@ -231,16 +242,16 @@
 		
 		/**
 		 * Get current language code.
-		 * 
+		 *
 		 * @return string
 		 */
 		public function getLanguageCode(){
-			return $this->_language_code;
+			return $this->_region ? $this->_language.'-'.$this->_region : $this->_language;
 		}
 		
 		/**
 		 * Get supported language codes.
-		 * 
+		 *
 		 * @return array
 		 */
 		public function getSupportedLanguageCodes(){
@@ -254,6 +265,61 @@
 			return $this->_languages;
 		}
 		
+		/**
+		 * Will determine current language. See method body for order.
+		 */
+		public function determineLanguageCode(){
+			$supported_language_codes = LanguageRedirect::instance()->getSupportedLanguageCodes();
+			
+			// 1. from Cookie
+			$Cookie = new Cookie(__SYM_COOKIE_PREFIX_ . 'language-redirect', TWO_WEEKS, __SYM_COOKIE_PATH__);
+			$cookie_language_code = $Cookie->get('language');
+			if( strlen($cookie_language_code) > 0 && in_array($cookie_language_code, $supported_language_codes) ){
+				return $Cookie->get('region') ? $cookie_language_code.'-'.$Cookie->get('region') : $cookie_language_code;
+			}
+		
+			// 2. from Geolocation Service
+			if( Symphony::ExtensionManager()->fetchStatus('geolocation_service') == EXTENSION_ENABLED ){
+				require_once(EXTENSIONS . '/geolocation_service/extension.driver.php');
+		
+				$ip = $this->_env['param']['env'] == 'dev' ? '92.81.156.219' : $_SERVER['REMOTE_ADDR'];
+		
+				$info = extension_geolocation_service::lookup($ip);
+		
+				if( $info instanceof XMLElement ){
+					$language_code = '';
+		
+					foreach( $info->getChildren() as $child ){
+						/*@var $child XMLElement */
+		
+						if( $child->getName() == 'country' ){
+							$language_code = strtolower($child->getValue());
+							break;
+						}
+					}
+		
+					if( !empty($language_code) && in_array($language_code, $supported_language_codes) ){
+						return $language_code;
+					}
+				}
+			}
+		
+			// 3. from Brower Languages
+			foreach( $this->_getBrowserLanguages() as $language ){
+				if( in_array($language, $supported_language_codes) ){
+					return $language;
+				};
+			}
+		
+			// 4. try english
+			if( in_array('en', $supported_language_codes) ){
+				return 'en';
+			}
+		
+			// 5. defaults to Reference language
+			return $supported_language_codes[0];
+		}
+		
 		
 		
 		/*------------------------------------------------------------------------------------------------*/
@@ -264,5 +330,36 @@
 			$clean = array_filter($clean);
 			
 			return $clean;
+		}
+		
+		
+		
+		/**
+		 * Get browser languages
+		 *
+		 * Return languages accepted by browser as an array sorted by priority
+		 * @return array language codes, e. g. 'en'
+		 */
+		private function _getBrowserLanguages() {
+			$languages = array();
+		
+			if(strlen(trim($_SERVER['HTTP_ACCEPT_LANGUAGE'])) < 1) return $languages;
+			if(!preg_match_all('/(\w+(?:-\w+)?,?)+(?:;q=(?:\d+\.\d+))?/', preg_replace('/\s+/', '', $_SERVER['HTTP_ACCEPT_LANGUAGE']), $matches)) return $languages;
+		
+			$priority = 1.0;
+			$languages = array();
+			foreach($matches[0] as $def){
+				list($list, $q) = explode(';q=', $def);
+				if(!empty($q)) $priority=floatval($q);
+				$list = explode(',', $list);
+				foreach($list as $lang){
+					$languages[$lang] = $priority;
+					$priority -= 0.000000001;
+				}
+			}
+			arsort($languages);
+			$languages = array_keys($languages);
+			// return list sorted by descending priority, e.g., array('en-gb','en');
+			return $languages;
 		}
 	}
