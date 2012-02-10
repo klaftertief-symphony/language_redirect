@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension id="language_redirect" status="released" xmlns="http://symphony-cms.com/schemas/extension/1.0">
+	<name>Language Redirect</name>
+	<description>Adds language redirection to Symphony.</description>
+	<repo type="github">https://github.com/klaftertief/language_redirect</repo>
+	<url type="discuss">http://symphony-cms.com/discuss/thread/41995/</url>
+	<types>
+		<type>Events</type>
+		<type>Multilingual</type>
+	</types>
+	<authors>
+		<author>
+			<name github="klaftertief" symphony="klaftertief">Jonas Coch</name>
+			<website>http://klaftertief.de</website>
+		</author>
+	</authors>
+	<releases>
+		<release version="1.0.3" date="2011-07-06" min="2.1.2" />
+	</releases>
+</extension>
