@@ -196,11 +196,13 @@
 		);
 		
 		private function __construct(){
+			$supported_language_codes = explode(',', General::sanitize(Symphony::Configuration()->get('language_codes', 'language_redirect')));
+			
 			$this->_language = General::sanitize($_REQUEST['language']);
+			//if no language set - use first language in the settings. So a language is always selected
+			if (!isset($this->_language) || $this->_language=='' ) $this->_language = $supported_language_codes[0];
 			$this->_region = General::sanitize($_REQUEST['region']);
 			$this->_language_code = $this->_region ? $this->_language.'-'.$this->_region : $this->_language;
-			
-			$supported_language_codes = explode(',', General::sanitize(Symphony::Configuration()->get('language_codes', 'language_redirect')));
 			
 			$this->_supported_language_codes = $this->cleanLanguageCodes($supported_language_codes);
 		}
